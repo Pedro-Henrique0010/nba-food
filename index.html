@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏀 NBA Food</title>
+  <style>
+    /* =============================================
+       GOOGLE FONTS
+    ============================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+
+    /* =============================================
+       CSS RESET & BASE
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --orange: #E87722;
+      --orange-dark: #c45e0a;
+      --black: #1D1D1D;
+      --court-light: #C8A96E;
+      --court-dark:  #B8925A;
+      --green: #2ECC71;
+      --amber: #F1C40F;
+      --red: #E74C3C;
+      --white: #F5F5F5;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* =============================================
+       HARDWOOD COURT BACKGROUND
+    ============================================= */
+    body {
+      background-color: var(--court-light);
+      background-image:
+        /* vertical plank separators */
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 59px,
+          rgba(0,0,0,0.07) 59px,
+          rgba(0,0,0,0.07) 60px
+        ),
+        /* wood grain sheen */
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,0.04) 0px,
+          rgba(255,255,255,0.04) 3px,
+          transparent 3px,
+          transparent 8px
+        ),
+        /* alternating plank colors */
+        repeating-linear-gradient(
+          90deg,
+          #C8A96E 0px,
+          #C8A96E 30px,
+          #B8925A 30px,
+          #B8925A 60px
+        );
+      position: relative;
+    }
+
+    /* =============================================
+       SCREENS (start / game / victory)
+    ============================================= */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* =============================================
+       START SCREEN
+    ============================================= */
+    #screen-start {
+      background: rgba(29, 29, 29, 0.88);
+      z-index: 10;
+    }
+
+    .start-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 900;
+      color: var(--orange);
+      text-shadow: 0 0 30px rgba(232,119,34,0.7), 3px 3px 0 #000;
+      letter-spacing: 2px;
+      margin-bottom: 0.3em;
+      animation: pulse-logo 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-logo {
+      0%, 100% { text-shadow: 0 0 30px rgba(232,119,34,0.7), 3px 3px 0 #000; }
+      50%       { text-shadow: 0 0 60px rgba(232,119,34,1),   3px 3px 0 #000; }
+    }
+
+    .start-subtitle {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      color: var(--white);
+      font-weight: 600;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+
+    .start-instructions {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(232,119,34,0.4);
+      border-radius: 12px;
+      padding: 1.2rem 2rem;
+      max-width: 480px;
+      width: 90%;
+      color: #ccc;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      line-height: 1.7;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .start-instructions strong {
+      color: var(--orange);
+    }
+
+    .btn-primary {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8em 2.4em;
+      cursor: pointer;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 20px rgba(232,119,34,0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 8px 30px rgba(232,119,34,0.7);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    /* =============================================
+       GAME SCREEN LAYOUT
+    ============================================= */
+    #screen-game {
+      flex-direction: column;
+      justify-content: flex-start;
+      z-index: 5;
+    }
+
+    /* --- HUD bar at very top --- */
+    #hud {
+      width: 100%;
+      background: rgba(29,29,29,0.85);
+      padding: 8px 16px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    #level-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.75rem, 2.5vw, 1rem);
+      color: var(--orange);
+      letter-spacing: 1px;
+    }
+
+    #progress-track {
+      width: min(320px, 85vw);
+      height: 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--orange), #ffaa44);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* --- Bins row --- */
+    #bins-row {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: clamp(6px, 2vw, 18px);
+      padding: clamp(4px, 1.5vw, 10px) clamp(4px, 2vw, 12px) clamp(4px, 1.5vw, 8px);
+      flex-shrink: 0;
+      align-items: flex-end; /* align bins at bottom so hoops stack on top */
+    }
+
+    /* =============================================
+       BIN WRAPPER: holds hoop above + box below
+    ============================================= */
+    .bin-wrapper {
+      flex: 1;
+      max-width: 240px;
+      min-width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s;
+    }
+
+    .bin-wrapper:hover  { transform: translateY(-4px) scale(1.03); }
+    .bin-wrapper:active { transform: scale(0.96); }
+
+    /* =============================================
+       BASKETBALL HOOP (CSS-drawn)
+    ============================================= */
+    .hoop-assembly {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    /* The backboard */
+    .hoop-backboard {
+      width: 70%;
+      height: clamp(18px, 4vw, 28px);
+      border-radius: 4px 4px 0 0;
+      border: 3px solid #fff;
+      background: rgba(255,255,255,0.12);
+      position: relative;
+      margin-bottom: 2px;
+    }
+
+    /* Inner square on backboard */
+    .hoop-backboard::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 45%;
+      height: 55%;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 1px;
+    }
+
+    /* The arm connecting backboard to rim */
+    .hoop-arm {
+      width: 4px;
+      height: clamp(8px, 2vw, 14px);
+      background: #888;
+    }
+
+    /* The rim (aro) */
+    .hoop-rim {
+      width: clamp(44px, 11vw, 72px);
+      height: clamp(10px, 2.5vw, 16px);
+      border-radius: 50%;
+      border-width: 3px;
+      border-style: solid;
+      background: transparent;
+      position: relative;
+      /* The rim color is set per bin type below */
+    }
+
+    /* Net drawn with a CSS clip-path trapezoid */
+    .hoop-net {
+      width: clamp(36px, 9vw, 58px);
+      height: clamp(20px, 5vw, 32px);
+      position: relative;
+      overflow: hidden;
+      margin-top: -2px;
+    }
+
+    /* Net strands via repeating linear-gradient */
+    .hoop-net::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px, transparent 4px,
+          rgba(255,255,255,0.55) 4px, rgba(255,255,255,0.55) 5px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px, transparent 6px,
+          rgba(255,255,255,0.35) 6px, rgba(255,255,255,0.35) 7px
+        );
+      clip-path: polygon(10% 0%, 90% 0%, 78% 100%, 22% 100%);
+    }
+
+    /* Rim colors by bin type */
+    .bin-wrapper[data-bin="natural"]     .hoop-rim { border-color: var(--green); box-shadow: 0 0 8px rgba(46,204,113,0.6); }
+    .bin-wrapper[data-bin="minimamente"] .hoop-rim { border-color: var(--amber); box-shadow: 0 0 8px rgba(241,196,15,0.6); }
+    .bin-wrapper[data-bin="ultra"]       .hoop-rim { border-color: var(--red);   box-shadow: 0 0 8px rgba(231,76,60,0.6);  }
+
+    /* Backboard colors */
+    .bin-wrapper[data-bin="natural"]     .hoop-backboard { border-color: var(--green); }
+    .bin-wrapper[data-bin="minimamente"] .hoop-backboard { border-color: var(--amber); }
+    .bin-wrapper[data-bin="ultra"]       .hoop-backboard { border-color: var(--red);   }
+
+    /* =============================================
+       THE BIN BOX (below the hoop)
+    ============================================= */
+    .bin {
+      width: 100%;
+      background: rgba(29,29,29,0.85);
+      border-radius: 10px;
+      padding: clamp(6px, 1.5vw, 12px) clamp(6px, 1.5vw, 12px);
+      border: 3px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .bin-wrapper[data-bin="natural"]     .bin { border-color: var(--green); box-shadow: 0 0 16px rgba(46,204,113,0.3); }
+    .bin-wrapper[data-bin="minimamente"] .bin { border-color: var(--amber); box-shadow: 0 0 16px rgba(241,196,15,0.3); }
+    .bin-wrapper[data-bin="ultra"]       .bin { border-color: var(--red);   box-shadow: 0 0 16px rgba(231,76,60,0.3);  }
+
+    .bin-wrapper:hover[data-bin="natural"]     .bin { box-shadow: 0 6px 28px rgba(46,204,113,0.55); }
+    .bin-wrapper:hover[data-bin="minimamente"] .bin { box-shadow: 0 6px 28px rgba(241,196,15,0.55); }
+    .bin-wrapper:hover[data-bin="ultra"]       .bin { box-shadow: 0 6px 28px rgba(231,76,60,0.55);  }
+
+    .bin-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.65rem, 2vw, 0.95rem);
+      text-align: center;
+      line-height: 1.25;
+      letter-spacing: 0.5px;
+    }
+
+    .bin-wrapper[data-bin="natural"]     .bin-label { color: var(--green); }
+    .bin-wrapper[data-bin="minimamente"] .bin-label { color: var(--amber); }
+    .bin-wrapper[data-bin="ultra"]       .bin-label { color: var(--red);   }
+
+    /* bin mouth / opening line at top of box */
+    .bin-mouth {
+      width: 80%;
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 2px;
+    }
+
+    .bin-wrapper[data-bin="natural"]     .bin-mouth { background: var(--green); }
+    .bin-wrapper[data-bin="minimamente"] .bin-mouth { background: var(--amber); }
+    .bin-wrapper[data-bin="ultra"]       .bin-mouth { background: var(--red);   }
+
+    /* --- Center play area --- */
+    #play-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #food-instruction {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+      color: rgba(255,255,255,0.7);
+      background: rgba(0,0,0,0.4);
+      padding: 5px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      margin-bottom: 18px;
+    }
+
+    #food-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    #food-emoji {
+      font-size: clamp(60px, 16vw, 100px);
+      line-height: 1;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+    }
+
+    #food-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.9rem, 3vw, 1.4rem);
+      font-weight: 700;
+      color: var(--white);
+      text-shadow: 1px 1px 4px #000;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    /* =============================================
+       FEEDBACK OVERLAY
+    ============================================= */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 20px;
+    }
+
+    #overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #overlay.correct { background: rgba(46,204,113,0.18); }
+    #overlay.wrong   { background: rgba(231,76,60,0.18);  }
+
+    .overlay-card {
+      background: rgba(20,20,20,0.95);
+      border-radius: 20px;
+      padding: clamp(1.2rem, 4vw, 2.5rem);
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      animation: card-pop 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes card-pop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .overlay-icon {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      margin-bottom: 0.5rem;
+    }
+
+    .overlay-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 2rem);
+      font-weight: 900;
+      margin-bottom: 0.6rem;
+    }
+
+    #overlay.correct .overlay-title { color: var(--green); }
+    #overlay.wrong   .overlay-title { color: var(--red);   }
+
+    .overlay-text {
+      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 1.6rem;
+    }
+
+    .overlay-text strong { color: var(--orange); }
+
+    /* =============================================
+       VICTORY SCREEN
+    ============================================= */
+    #screen-victory {
+      background: rgba(29, 29, 29, 0.92);
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    #victory-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    #victory-trophy {
+      font-size: clamp(4rem, 14vw, 8rem);
+      animation: trophy-bounce 1s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    @keyframes trophy-bounce {
+      from { transform: scale(0) rotate(-30deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+    }
+
+    #victory-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.4rem, 5vw, 2.8rem);
+      font-weight: 900;
+      color: var(--orange);
+      text-shadow: 0 0 20px rgba(232,119,34,0.6), 2px 2px 0 #000;
+    }
+
+    #victory-sub {
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      color: #ddd;
+      max-width: 400px;
+    }
+
+    /* confetti pieces */
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confetti-fall linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-60px) rotate(0deg);   opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* =============================================
+       FLYING FOOD (throw animation)
+    ============================================= */
+    #flying-food {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      font-size: clamp(50px, 12vw, 80px);
+      display: none;
+      line-height: 1;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+
+    /* =============================================
+       SCREEN FLASH (correct / wrong)
+    ============================================= */
+    #flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #flash.green { background: rgba(46,204,113,0.35); }
+    #flash.red   { background: rgba(231,76,60,0.35);  }
+
+    /* =============================================
+       RESPONSIVE TWEAKS
+    ============================================= */
+    @media (max-height: 600px) {
+      #food-emoji { font-size: 50px; }
+      .bin { padding: 4px 6px; }
+      .hoop-backboard { height: 16px; }
+      .hoop-rim { width: 36px; height: 8px; }
+      .hoop-net { width: 28px; height: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       FLASH OVERLAY (full-screen color flash)
+  =========================================== -->
+  <div id="flash"></div>
+
+  <!-- ==========================================
+       FLYING FOOD ELEMENT (throw animation)
+  =========================================== -->
+  <div id="flying-food"></div>
+
+  <!-- ==========================================
+       SCREEN 1: START
+  =========================================== -->
+  <div id="screen-start" class="screen active">
+    <div class="start-logo">🏀 NBA Food</div>
+    <div class="start-subtitle">Classifique os alimentos corretamente!</div>
+    <div class="start-instructions">
+      Três lixeiras aguardam os alimentos:<br>
+      <strong>In Natura / Natural</strong> 🟢 &nbsp;|&nbsp;
+      <strong>Minimamente Processado</strong> 🟡 &nbsp;|&nbsp;
+      <strong>Ultraprocessado</strong> 🔴<br><br>
+      Clique na lixeira certa para arremessar o alimento!<br>
+      São <strong>7 níveis</strong> — acerte todos para vencer! Se errar, volta ao início.
+    </div>
+    <button class="btn-primary" id="btn-start">Jogar! 🏀</button>
+  </div>
+
+  <!-- ==========================================
+       SCREEN 2: GAME
+  =========================================== -->
+  <div id="screen-game" class="screen">
+
+    <!-- HUD: level + progress -->
+    <div id="hud">
+      <div id="level-label">Nível 1 de 7</div>
+      <div id="progress-track">
+        <div id="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Bins row -->
+    <div id="bins-row">
+
+      <!-- BIN: In Natura -->
+      <div class="bin-wrapper" data-bin="natural" role="button" tabindex="0">
+        <div class="hoop-assembly">
+          <div class="hoop-backboard"></div>
+          <div class="hoop-arm"></div>
+          <div class="hoop-rim"></div>
+          <div class="hoop-net"></div>
+        </div>
+        <div class="bin">
+          <div class="bin-mouth"></div>
+          <div class="bin-label">In Natura /<br>Natural</div>
+        </div>
+      </div>
+
+      <!-- BIN: Minimamente Processado -->
+      <div class="bin-wrapper" data-bin="minimamente" role="button" tabindex="0">
+        <div class="hoop-assembly">
+          <div class="hoop-backboard"></div>
+          <div class="hoop-arm"></div>
+          <div class="hoop-rim"></div>
+          <div class="hoop-net"></div>
+        </div>
+        <div class="bin">
+          <div class="bin-mouth"></div>
+          <div class="bin-label">Minimamente<br>Processado</div>
+        </div>
+      </div>
+
+      <!-- BIN: Ultraprocessado -->
+      <div class="bin-wrapper" data-bin="ultra" role="button" tabindex="0">
+        <div class="hoop-assembly">
+          <div class="hoop-backboard"></div>
+          <div class="hoop-arm"></div>
+          <div class="hoop-rim"></div>
+          <div class="hoop-net"></div>
+        </div>
+        <div class="bin">
+          <div class="bin-mouth"></div>
+          <div class="bin-label">Ultra-<br>processado</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Play area: instruction + food -->
+    <div id="play-area">
+      <div id="food-instruction">Clique na lixeira correta para arremessar!</div>
+      <div id="food-container">
+        <div id="food-emoji">🍎</div>
+        <div id="food-name">Maçã</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       FEEDBACK OVERLAY (correct / wrong)
+  =========================================== -->
+  <div id="overlay">
+    <div class="overlay-card">
+      <div class="overlay-icon" id="overlay-icon">✅</div>
+      <div class="overlay-title" id="overlay-title">Correto!</div>
+      <div class="overlay-text" id="overlay-text"></div>
+      <button class="btn-primary" id="overlay-btn">Próximo Nível →</button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SCREEN 3: VICTORY
+  =========================================== -->
+  <div id="screen-victory" class="screen">
+    <div id="victory-content">
+      <div id="victory-trophy">🏆</div>
+      <div id="victory-title">Você completou todos os 7 níveis!</div>
+      <div id="victory-sub">Parabéns! Você é um expert em alimentação saudável! 🥦🏀</div>
+      <button class="btn-primary" id="btn-play-again">Jogar Novamente 🔄</button>
+    </div>
+  </div>
+
+  <script>
+    /* =============================================
+       GAME DATA
+    ============================================= */
+    const LEVELS = [
+      {
+        emoji: '🍎',
+        name: 'Maçã',
+        correct: 'natural',
+        fact: 'A maçã é um alimento in natura! Frutas frescas são consumidas diretamente da natureza, sem qualquer processamento. 🌿'
+      },
+      {
+        emoji: '🥛',
+        name: 'Iogurte Natural',
+        correct: 'minimamente',
+        fact: 'O iogurte natural é minimamente processado! A fermentação é um processo simples que preserva os nutrientes do leite. 🥛'
+      },
+      {
+        emoji: '🧃',
+        name: 'Suco de Laranja Integral',
+        correct: 'minimamente',
+        fact: 'O suco integral é minimamente processado! A prensagem da laranja é um processo físico simples, sem aditivos. 🍊'
+      },
+      {
+        emoji: '🍪',
+        name: 'Biscoito Recheado',
+        correct: 'ultra',
+        fact: 'O biscoito recheado é ultraprocessado! Contém conservantes, corantes, gordura trans e aromatizantes artificiais. ⚠️'
+      },
+      {
+        emoji: '🍚',
+        name: 'Arroz Branco Cozido',
+        correct: 'minimamente',
+        fact: 'O arroz cozido é minimamente processado! O processo de cozimento é simples e não adiciona substâncias artificiais. 🌾'
+      },
+      {
+        emoji: '🥤',
+        name: 'Refrigerante',
+        correct: 'ultra',
+        fact: 'O refrigerante é ultraprocessado! Contém açúcar em excesso, corantes, conservantes e CO₂ artificial. 🚫'
+      },
+      {
+        emoji: '🍌',
+        name: 'Banana',
+        correct: 'natural',
+        fact: 'A banana é um alimento in natura! Assim como todas as frutas, é consumida diretamente da natureza. 🌿'
+      }
+    ];
+
+    /** Error messages by correct category */
+    const WRONG_MSGS = {
+      natural:     'Alimentos In Natura são frutas, verduras e legumes consumidos diretamente da natureza!',
+      minimamente: 'Alimentos Minimamente Processados passam por processos simples como cozimento, fermentação ou prensagem, sem aditivos artificiais!',
+      ultra:       'Alimentos Ultraprocessados contêm muitos ingredientes artificiais como conservantes, corantes e aromatizantes!'
+    };
+
+    /* =============================================
+       STATE
+    ============================================= */
+    let currentLevel = 0; // 0-indexed
+    let throwing     = false; // prevent double-clicks during animation
+
+    /* =============================================
+       DOM REFS
+    ============================================= */
+    const screenStart   = document.getElementById('screen-start');
+    const screenGame    = document.getElementById('screen-game');
+    const screenVictory = document.getElementById('screen-victory');
+
+    const levelLabel    = document.getElementById('level-label');
+    const progressFill  = document.getElementById('progress-fill');
+
+    const foodEmoji     = document.getElementById('food-emoji');
+    const foodName      = document.getElementById('food-name');
+    const foodContainer = document.getElementById('food-container');
+
+    const overlay       = document.getElementById('overlay');
+    const overlayIcon   = document.getElementById('overlay-icon');
+    const overlayTitle  = document.getElementById('overlay-title');
+    const overlayText   = document.getElementById('overlay-text');
+    const overlayBtn    = document.getElementById('overlay-btn');
+
+    const flyingFood    = document.getElementById('flying-food');
+    const flash         = document.getElementById('flash');
+
+    const bins          = document.querySelectorAll('.bin-wrapper');
+
+    /* =============================================
+       SCREEN MANAGEMENT
+    ============================================= */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    /* =============================================
+       AUDIO (Web Audio API)
+    ============================================= */
+    let audioCtx = null;
+
+    /** Lazily create AudioContext (required by browsers after user gesture) */
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    /**
+     * Play a sequence of tones.
+     * @param {number[]} frequencies  Array of Hz values.
+     * @param {boolean}  ascending    true = rising pitch profile, false = falling.
+     */
+    function playTones(frequencies, ascending) {
+      const ctx     = getAudioCtx();
+      const now     = ctx.currentTime;
+      const noteDur = 0.12; // seconds per note
+      const gap     = 0.03; // gap between notes
+
+      frequencies.forEach((freq, i) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.type      = ascending ? 'sine' : 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + i * (noteDur + gap));
+
+        // Envelope: quick attack, smooth decay
+        const start = now + i * (noteDur + gap);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.35, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + noteDur);
+
+        osc.start(start);
+        osc.stop(start + noteDur);
+      });
+    }
+
+    function playCorrectSound() {
+      playTones([523, 659, 784], true);   // C5 → E5 → G5 (ascending)
+    }
+
+    function playWrongSound() {
+      playTones([400, 300, 200], false);  // descending
+    }
+
+    /* =============================================
+       HUD UPDATE
+    ============================================= */
+    function updateHUD() {
+      const lvNum = currentLevel + 1;
+      levelLabel.textContent = `Nível ${lvNum} de 7`;
+      // progress: filled = levels completed before this one
+      progressFill.style.width = `${(currentLevel / 7) * 100}%`;
+    }
+
+    /* =============================================
+       LOAD LEVEL
+    ============================================= */
+    function loadLevel(index) {
+      throwing = false;
+      currentLevel = index;
+      updateHUD();
+
+      const level = LEVELS[index];
+      foodEmoji.textContent = level.emoji;
+      foodName.textContent  = level.name;
+
+      // Restore float animation
+      foodContainer.style.animation = 'none';
+      // Force reflow to restart animation
+      void foodContainer.offsetWidth;
+      foodContainer.style.animation = '';
+    }
+
+    /* =============================================
+       THROW ANIMATION — 2-phase arc:
+         Phase 1 (0→0.65): food flies from center to the hoop rim
+         Phase 2 (0.65→1): food drops straight down into the bin box
+    ============================================= */
+    /**
+     * @param {Element} wrapperEl  The clicked .bin-wrapper element.
+     * @param {Function} onComplete Callback when animation finishes.
+     */
+    function throwFood(wrapperEl, onComplete) {
+      const DURATION = 750; // ms total
+
+      // --- Source: center of food emoji ---
+      const foodRect = foodContainer.getBoundingClientRect();
+      const startX   = foodRect.left + foodRect.width  / 2;
+      const startY   = foodRect.top  + foodRect.height / 2;
+
+      // --- Phase 1 target: center of the hoop rim ---
+      const rimEl   = wrapperEl.querySelector('.hoop-rim');
+      const rimRect = rimEl.getBoundingClientRect();
+      const hoopX   = rimRect.left + rimRect.width  / 2;
+      const hoopY   = rimRect.top  + rimRect.height / 2;
+
+      // --- Phase 2 target: center of the bin box ---
+      const boxEl   = wrapperEl.querySelector('.bin');
+      const boxRect = boxEl.getBoundingClientRect();
+      const endX    = boxRect.left + boxRect.width  / 2;
+      const endY    = boxRect.top  + boxRect.height / 2;
+
+      // Arc height for phase 1 (proportional to horizontal distance)
+      const dx   = hoopX - startX;
+      const arcH = Math.max(80, Math.abs(dx) * 0.45);
+
+      // Set up flying element
+      flyingFood.textContent   = LEVELS[currentLevel].emoji;
+      flyingFood.style.display = 'block';
+
+      // Hide original food during flight
+      foodContainer.style.visibility = 'hidden';
+
+      const halfSize = parseFloat(getComputedStyle(flyingFood).fontSize) / 2;
+
+      // Phase split point (0–1 timeline)
+      const SPLIT = 0.65;
+
+      let startTime = null;
+
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        const elapsed = ts - startTime;
+        const tRaw    = Math.min(elapsed / DURATION, 1);
+
+        let x, y, scale;
+
+        if (tRaw <= SPLIT) {
+          // ── Phase 1: parabolic arc from food to hoop ──
+          const t     = tRaw / SPLIT;            // 0→1 within phase 1
+          const tEase = easeInOut(t);
+
+          x = startX + (hoopX - startX) * tEase;
+          // Subtract arc height (sin curve peaks at t=0.5)
+          y = startY + (hoopY - startY) * tEase - arcH * Math.sin(Math.PI * t);
+          scale = 1 - t * 0.20; // shrink slightly as it approaches hoop
+
+        } else {
+          // ── Phase 2: straight drop from hoop into bin box ──
+          const t     = (tRaw - SPLIT) / (1 - SPLIT); // 0→1 within phase 2
+          const tEase = easeIn(t);
+
+          x = hoopX + (endX - hoopX) * tEase * 0.08; // barely any horizontal drift
+          y = hoopY + (endY - hoopY) * tEase;
+          scale = 0.80 - t * 0.30; // shrink further as it falls into bin
+        }
+
+        flyingFood.style.left      = `${x - halfSize}px`;
+        flyingFood.style.top       = `${y - halfSize}px`;
+        flyingFood.style.transform = `scale(${Math.max(scale, 0.1)}) rotate(${tRaw * 360}deg)`;
+
+        if (tRaw < 1) {
+          requestAnimationFrame(step);
+        } else {
+          // Landing complete
+          flyingFood.style.display = 'none';
+          foodContainer.style.visibility = 'visible';
+          onComplete();
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    /** Cubic ease-in-out */
+    function easeInOut(t) {
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
+    /** Quadratic ease-in */
+    function easeIn(t) {
+      return t * t;
+    }
+
+    /* =============================================
+       SCREEN FLASH
+    ============================================= */
+    function triggerFlash(type) {
+      flash.className = type; // 'green' or 'red'
+      flash.style.opacity = '1';
+      setTimeout(() => {
+        flash.style.opacity = '0';
+        setTimeout(() => { flash.className = ''; }, 200);
+      }, 180);
+    }
+
+    /* =============================================
+       SHOW FEEDBACK OVERLAY
+    ============================================= */
+    function showCorrectOverlay(level, isLast) {
+      overlayIcon.textContent  = '✅';
+      overlayTitle.textContent = 'Correto! 🎉';
+      overlayText.innerHTML    = level.fact;
+      overlayBtn.textContent   = isLast ? 'Ver Resultado 🏆' : 'Próximo Nível →';
+      overlay.className        = 'show correct';
+
+      overlayBtn.onclick = () => {
+        overlay.className = '';
+        if (isLast) {
+          showVictory();
+        } else {
+          loadLevel(currentLevel + 1);
+        }
+      };
+    }
+
+    function showWrongOverlay(level) {
+      overlayIcon.textContent  = '❌';
+      overlayTitle.textContent = 'Ops! Errou!';
+      overlayText.innerHTML    =
+        `A categoria correta era: <strong>${categoryLabel(level.correct)}</strong>.<br><br>` +
+        WRONG_MSGS[level.correct];
+      overlayBtn.textContent   = 'Recomeçar 🔄';
+      overlay.className        = 'show wrong';
+
+      overlayBtn.onclick = () => {
+        overlay.className = '';
+        loadLevel(0);
+      };
+    }
+
+    function categoryLabel(cat) {
+      const labels = {
+        natural:     '🟢 In Natura / Natural',
+        minimamente: '🟡 Minimamente Processado',
+        ultra:       '🔴 Ultraprocessado'
+      };
+      return labels[cat] || cat;
+    }
+
+    /* =============================================
+       HANDLE BIN CLICK
+    ============================================= */
+    function handleBinClick(wrapperEl) {
+      if (throwing) return; // ignore clicks during animation
+      throwing = true;
+
+      const chosen = wrapperEl.dataset.bin;
+      const level  = LEVELS[currentLevel];
+
+      throwFood(wrapperEl, () => {
+        // After food lands → evaluate answer
+        const isCorrect = chosen === level.correct;
+        const isLast    = currentLevel === LEVELS.length - 1;
+
+        if (isCorrect) {
+          triggerFlash('green');
+          playCorrectSound();
+          // Update progress to reflect this level completed
+          progressFill.style.width = `${((currentLevel + 1) / 7) * 100}%`;
+          setTimeout(() => showCorrectOverlay(level, isLast), 200);
+        } else {
+          triggerFlash('red');
+          playWrongSound();
+          setTimeout(() => showWrongOverlay(level), 200);
+        }
+      });
+    }
+
+    /* =============================================
+       VICTORY SCREEN
+    ============================================= */
+    function showVictory() {
+      showScreen('screen-victory');
+      createConfetti();
+    }
+
+    function createConfetti() {
+      const container = document.getElementById('screen-victory');
+
+      // Remove old pieces
+      container.querySelectorAll('.confetti-piece').forEach(p => p.remove());
+
+      const colors = ['#E87722','#F1C40F','#2ECC71','#E74C3C','#3498DB','#9B59B6','#1ABC9C'];
+      const count  = 120;
+
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+
+        const x        = Math.random() * 100; // vw
+        const delay    = Math.random() * 3;   // s
+        const duration = 2.5 + Math.random() * 2.5; // s
+        const size     = 6 + Math.random() * 10;     // px
+        const color    = colors[Math.floor(Math.random() * colors.length)];
+
+        piece.style.cssText = `
+          left: ${x}vw;
+          top: 0;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        `;
+
+        container.appendChild(piece);
+      }
+    }
+
+    /* =============================================
+       EVENT LISTENERS
+    ============================================= */
+
+    // Start button
+    document.getElementById('btn-start').addEventListener('click', () => {
+      showScreen('screen-game');
+      loadLevel(0);
+    });
+
+    // Play again
+    document.getElementById('btn-play-again').addEventListener('click', () => {
+      showScreen('screen-game');
+      loadLevel(0);
+    });
+
+    // Bin clicks (attached to .bin-wrapper elements)
+    bins.forEach(wrapper => {
+      wrapper.addEventListener('click', () => handleBinClick(wrapper));
+
+      // Keyboard accessibility (tabindex + role already set in HTML)
+      wrapper.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleBinClick(wrapper);
+        }
+      });
+    });
+
+    /* =============================================
+       INITIAL STATE
+    ============================================= */
+    // Game starts on the start screen (already .active)
+    // The game screen is shown on "Jogar!" click.
+  </script>
+</body>
+</html>
