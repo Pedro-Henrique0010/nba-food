@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🏀 NBA Food</title>
   <style>
-    /* =============================================
+    /* ===
        GOOGLE FONTS
-    ============================================= */
+    === */
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
 
-    /* =============================================
+    /* ===
        CSS RESET & BASE
-    ============================================= */
+    === */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -38,9 +38,9 @@
       font-family: 'Rajdhani', sans-serif;
     }
 
-    /* =============================================
+    /* ===
        HARDWOOD COURT BACKGROUND
-    ============================================= */
+    === */
     body {
       background-color: var(--court-light);
       background-image:
@@ -71,9 +71,9 @@
       position: relative;
     }
 
-    /* =============================================
+    /* ===
        SCREENS (start / game / victory)
-    ============================================= */
+    === */
     .screen {
       position: absolute;
       inset: 0;
@@ -91,9 +91,9 @@
       pointer-events: all;
     }
 
-    /* =============================================
+    /* ===
        START SCREEN
-    ============================================= */
+    === */
     #screen-start {
       background: rgba(29, 29, 29, 0.88);
       z-index: 10;
@@ -165,9 +165,9 @@
       transform: scale(0.97);
     }
 
-    /* =============================================
+    /* ===
        GAME SCREEN LAYOUT
-    ============================================= */
+    === */
     #screen-game {
       flex-direction: column;
       justify-content: flex-start;
@@ -219,9 +219,9 @@
       align-items: flex-end; /* align bins at bottom so hoops stack on top */
     }
 
-    /* =============================================
+    /* ===
        BIN WRAPPER: holds hoop above + box below
-    ============================================= */
+    === */
     .bin-wrapper {
       flex: 1;
       max-width: 240px;
@@ -238,9 +238,9 @@
     .bin-wrapper:hover  { transform: translateY(-4px) scale(1.03); }
     .bin-wrapper:active { transform: scale(0.96); }
 
-    /* =============================================
+    /* ===
        BASKETBALL HOOP (CSS-drawn)
-    ============================================= */
+    === */
     .hoop-assembly {
       display: flex;
       flex-direction: column;
@@ -330,9 +330,9 @@
     .bin-wrapper[data-bin="minimamente"] .hoop-backboard { border-color: var(--amber); }
     .bin-wrapper[data-bin="ultra"]       .hoop-backboard { border-color: var(--red);   }
 
-    /* =============================================
+    /* ===
        THE BIN BOX (below the hoop)
-    ============================================= */
+    === */
     .bin {
       width: 100%;
       background: rgba(29,29,29,0.85);
@@ -429,9 +429,9 @@
       letter-spacing: 1px;
     }
 
-    /* =============================================
+    /* ===
        FEEDBACK OVERLAY
-    ============================================= */
+    === */
     #overlay {
       position: fixed;
       inset: 0;
@@ -494,9 +494,9 @@
 
     .overlay-text strong { color: var(--orange); }
 
-    /* =============================================
+    /* ===
        VICTORY SCREEN
-    ============================================= */
+    === */
     #screen-victory {
       background: rgba(29, 29, 29, 0.92);
       z-index: 10;
@@ -553,9 +553,9 @@
       100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
-    /* =============================================
+    /* ===
        FLYING FOOD (throw animation)
-    ============================================= */
+    === */
     #flying-food {
       position: fixed;
       pointer-events: none;
@@ -566,9 +566,9 @@
       filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
     }
 
-    /* =============================================
+    /* ===
        SCREEN FLASH (correct / wrong)
-    ============================================= */
+    === */
     #flash {
       position: fixed;
       inset: 0;
@@ -581,9 +581,9 @@
     #flash.green { background: rgba(46,204,113,0.35); }
     #flash.red   { background: rgba(231,76,60,0.35);  }
 
-    /* =============================================
+    /* ===
        RESPONSIVE TWEAKS
-    ============================================= */
+    === */
     @media (max-height: 600px) {
       #food-emoji { font-size: 50px; }
       .bin { padding: 4px 6px; }
@@ -595,19 +595,19 @@
 </head>
 <body>
 
-  <!-- ==========================================
+  <!-- 
        FLASH OVERLAY (full-screen color flash)
-  =========================================== -->
+  = -->
   <div id="flash"></div>
 
-  <!-- ==========================================
+  <!-- 
        FLYING FOOD ELEMENT (throw animation)
-  =========================================== -->
+  = -->
   <div id="flying-food"></div>
 
-  <!-- ==========================================
+  <!-- 
        SCREEN 1: START
-  =========================================== -->
+  = -->
   <div id="screen-start" class="screen active">
     <div class="start-logo">🏀 NBA Food</div>
     <div class="start-subtitle">Classifique os alimentos corretamente!</div>
@@ -617,19 +617,19 @@
       <strong>Minimamente Processado</strong> 🟡 &nbsp;|&nbsp;
       <strong>Ultraprocessado</strong> 🔴<br><br>
       Clique na lixeira certa para arremessar o alimento!<br>
-      São <strong>7 níveis</strong> — acerte todos para vencer! Se errar, volta ao início.
+      São <strong>20 níveis</strong> — acerte todos para vencer! Se errar, volta ao início.
     </div>
     <button class="btn-primary" id="btn-start">Jogar! 🏀</button>
   </div>
 
-  <!-- ==========================================
+  <!-- 
        SCREEN 2: GAME
-  =========================================== -->
+  = -->
   <div id="screen-game" class="screen">
 
     <!-- HUD: level + progress -->
     <div id="hud">
-      <div id="level-label">Nível 1 de 7</div>
+      <div id="level-label">Nível 1 de 20</div>
       <div id="progress-track">
         <div id="progress-fill" style="width: 0%"></div>
       </div>
@@ -693,9 +693,9 @@
 
   </div>
 
-  <!-- ==========================================
+  <!-- 
        FEEDBACK OVERLAY (correct / wrong)
-  =========================================== -->
+  = -->
   <div id="overlay">
     <div class="overlay-card">
       <div class="overlay-icon" id="overlay-icon">✅</div>
@@ -705,22 +705,22 @@
     </div>
   </div>
 
-  <!-- ==========================================
+  <!-- 
        SCREEN 3: VICTORY
-  =========================================== -->
+  = -->
   <div id="screen-victory" class="screen">
     <div id="victory-content">
       <div id="victory-trophy">🏆</div>
-      <div id="victory-title">Você completou todos os 7 níveis!</div>
+      <div id="victory-title">Você completou todos os 20 níveis!</div>
       <div id="victory-sub">Parabéns! Você é um expert em alimentação saudável! 🥦🏀</div>
       <button class="btn-primary" id="btn-play-again">Jogar Novamente 🔄</button>
     </div>
   </div>
 
   <script>
-    /* =============================================
+    /* ===
        GAME DATA
-    ============================================= */
+    === */
     const LEVELS = [
       {
         emoji: '🍎',
@@ -730,15 +730,15 @@
       },
       {
         emoji: '🥛',
-        name: 'Iogurte Natural',
+        name: 'Leite Pasteurizado',
         correct: 'minimamente',
-        fact: 'O iogurte natural é minimamente processado! A fermentação é um processo simples que preserva os nutrientes do leite. 🥛'
+        fact: 'O leite pasteurizado é minimamente processado! A pasteurização é um processo térmico simples que elimina bactérias sem alterar os nutrientes do leite. 🥛'
       },
       {
-        emoji: '🧃',
-        name: 'Suco de Laranja Integral',
+        emoji: '🍊',
+        name: 'Laranja Descascada e Cortada',
         correct: 'minimamente',
-        fact: 'O suco integral é minimamente processado! A prensagem da laranja é um processo físico simples, sem aditivos. 🍊'
+        fact: 'A laranja descascada e cortada é minimamente processada! O corte e o descascamento são processos físicos simples que preparam o alimento para o consumo. 🍊'
       },
       {
         emoji: '🍪',
@@ -763,6 +763,86 @@
         name: 'Banana',
         correct: 'natural',
         fact: 'A banana é um alimento in natura! Assim como todas as frutas, é consumida diretamente da natureza. 🌿'
+      },
+
+      /* ── NÍVEIS 8–20 (13 novos, ordem aleatória) ── */
+      {
+        emoji: '🥚',
+        name: 'Ovo',
+        correct: 'natural',
+        fact: 'O ovo é um alimento in natura! Vem diretamente das galinhas, sem qualquer processamento industrial. 🌿'
+      },
+      {
+        emoji: '🍜',
+        name: 'Macarrão Instantâneo',
+        correct: 'ultra',
+        fact: 'O macarrão instantâneo é ultraprocessado! Contém sódio em excesso, gorduras hidrogenadas, aromatizantes e conservantes artificiais. ⚠️'
+      },
+      {
+        emoji: '🌾',
+        name: 'Aveia em Grão',
+        correct: 'natural',
+        fact: 'A aveia em grão é in natura! É o cereal colhido direto do campo, sem nenhuma alteração industrial. 🌿'
+      },
+      {
+        emoji: '🧊',
+        name: 'Frango Congelado sem Tempero',
+        correct: 'minimamente',
+        fact: 'O frango congelado sem tempero é minimamente processado! O congelamento é apenas uma técnica de conservação que não altera o alimento. ❄️'
+      },
+      {
+        emoji: '🍟',
+        name: 'Batata Frita de Fast Food',
+        correct: 'ultra',
+        fact: 'A batata frita de fast food é ultraprocessada! É produzida com aditivos, realçadores de sabor, gordura vegetal hidrogenada e muito sódio. ⚠️'
+      },
+      {
+        emoji: '🥦',
+        name: 'Brócolis Fresco',
+        correct: 'natural',
+        fact: 'O brócolis fresco é in natura! Hortaliças frescas são consumidas diretamente da natureza, sem processamento. 🌿'
+      },
+      {
+        emoji: '🥣',
+        name: 'Aveia em Flocos',
+        correct: 'minimamente',
+        fact: 'A aveia em flocos é minimamente processada! O processo de laminação é simples e não adiciona nenhum ingrediente artificial. 🌾'
+      },
+      {
+        emoji: '🍗',
+        name: 'Nuggets de Frango',
+        correct: 'ultra',
+        fact: 'Os nuggets de frango são ultraprocessados! Contêm carne mecanicamente separada, amido, conservantes, aromatizantes e corantes. ⚠️'
+      },
+      {
+        emoji: '🍖',
+        name: 'Frango Fresco',
+        correct: 'natural',
+        fact: 'O peito de frango fresco é in natura! A carne fresca sem temperos ou conservantes é um alimento direto da natureza. 🌿'
+      },
+      {
+        emoji: '🍫',
+        name: 'Achocolatado em Pó com Aditivos',
+        correct: 'ultra',
+        fact: 'O achocolatado em pó com aditivos é ultraprocessado! Contém açúcar em excesso, emulsificantes, aromatizantes e corantes artificiais. ⚠️'
+      },
+      {
+        emoji: '🫚',
+        name: 'Beterraba Cozida',
+        correct: 'minimamente',
+        fact: 'A beterraba cozida é minimamente processada! O cozimento é um processo físico simples que não adiciona nenhuma substância artificial. 🌱'
+      },
+      {
+        emoji: '🍫',
+        name: 'Fruto do Cacau',
+        correct: 'natural',
+        fact: 'O fruto do cacau é in natura! Colhido direto da cacaueira, é consumido em sua forma natural sem nenhum processamento industrial. 🌿'
+      },
+      {
+        emoji: '🥣',
+        name: 'Cereal de Quinoa Adoçado e Saborizado',
+        correct: 'ultra',
+        fact: 'O cereal de quinoa adoçado e saborizado é ultraprocessado! Apesar da quinoa ser natural, os aditivos, açúcares e aromatizantes o tornam ultraprocessado. ⚠️'
       }
     ];
 
@@ -773,15 +853,15 @@
       ultra:       'Alimentos Ultraprocessados contêm muitos ingredientes artificiais como conservantes, corantes e aromatizantes!'
     };
 
-    /* =============================================
+    /* ===
        STATE
-    ============================================= */
+    === */
     let currentLevel = 0; // 0-indexed
     let throwing     = false; // prevent double-clicks during animation
 
-    /* =============================================
+    /* ===
        DOM REFS
-    ============================================= */
+    === */
     const screenStart   = document.getElementById('screen-start');
     const screenGame    = document.getElementById('screen-game');
     const screenVictory = document.getElementById('screen-victory');
@@ -804,17 +884,17 @@
 
     const bins          = document.querySelectorAll('.bin-wrapper');
 
-    /* =============================================
+    /* ===
        SCREEN MANAGEMENT
-    ============================================= */
+    === */
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
 
-    /* =============================================
+    /* ===
        AUDIO (Web Audio API)
-    ============================================= */
+    === */
     let audioCtx = null;
 
     /** Lazily create AudioContext (required by browsers after user gesture) */
@@ -865,19 +945,19 @@
       playTones([400, 300, 200], false);  // descending
     }
 
-    /* =============================================
+    /* ===
        HUD UPDATE
-    ============================================= */
+    === */
     function updateHUD() {
       const lvNum = currentLevel + 1;
-      levelLabel.textContent = `Nível ${lvNum} de 7`;
+      levelLabel.textContent = `Nível ${lvNum} de 20`;
       // progress: filled = levels completed before this one
-      progressFill.style.width = `${(currentLevel / 7) * 100}%`;
+      progressFill.style.width = `${(currentLevel / LEVELS.length) * 100}%`;
     }
 
-    /* =============================================
+    /* ===
        LOAD LEVEL
-    ============================================= */
+    === */
     function loadLevel(index) {
       throwing = false;
       currentLevel = index;
@@ -894,11 +974,11 @@
       foodContainer.style.animation = '';
     }
 
-    /* =============================================
+    /* ===
        THROW ANIMATION — 2-phase arc:
          Phase 1 (0→0.65): food flies from center to the hoop rim
          Phase 2 (0.65→1): food drops straight down into the bin box
-    ============================================= */
+    === */
     /**
      * @param {Element} wrapperEl  The clicked .bin-wrapper element.
      * @param {Function} onComplete Callback when animation finishes.
@@ -994,9 +1074,9 @@
       return t * t;
     }
 
-    /* =============================================
+    /* ===
        SCREEN FLASH
-    ============================================= */
+    === */
     function triggerFlash(type) {
       flash.className = type; // 'green' or 'red'
       flash.style.opacity = '1';
@@ -1006,9 +1086,9 @@
       }, 180);
     }
 
-    /* =============================================
+    /* ===
        SHOW FEEDBACK OVERLAY
-    ============================================= */
+    === */
     function showCorrectOverlay(level, isLast) {
       overlayIcon.textContent  = '✅';
       overlayTitle.textContent = 'Correto! 🎉';
@@ -1050,9 +1130,9 @@
       return labels[cat] || cat;
     }
 
-    /* =============================================
+    /* ===
        HANDLE BIN CLICK
-    ============================================= */
+    === */
     function handleBinClick(wrapperEl) {
       if (throwing) return; // ignore clicks during animation
       throwing = true;
@@ -1069,7 +1149,7 @@
           triggerFlash('green');
           playCorrectSound();
           // Update progress to reflect this level completed
-          progressFill.style.width = `${((currentLevel + 1) / 7) * 100}%`;
+          progressFill.style.width = `${((currentLevel + 1) / LEVELS.length) * 100}%`;
           setTimeout(() => showCorrectOverlay(level, isLast), 200);
         } else {
           triggerFlash('red');
@@ -1079,9 +1159,9 @@
       });
     }
 
-    /* =============================================
+    /* ===
        VICTORY SCREEN
-    ============================================= */
+    === */
     function showVictory() {
       showScreen('screen-victory');
       createConfetti();
@@ -1121,9 +1201,9 @@
       }
     }
 
-    /* =============================================
+    /* ===
        EVENT LISTENERS
-    ============================================= */
+    === */
 
     // Start button
     document.getElementById('btn-start').addEventListener('click', () => {
@@ -1150,9 +1230,9 @@
       });
     });
 
-    /* =============================================
+    /* ===
        INITIAL STATE
-    ============================================= */
+    === */
     // Game starts on the start screen (already .active)
     // The game screen is shown on "Jogar!" click.
   </script>
